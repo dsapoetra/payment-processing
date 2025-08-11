@@ -284,10 +284,47 @@ export class LoggingEnvironmentsConfig {
   }
 
   /**
+   * Serverless environment logging configuration (Vercel, AWS Lambda, etc.)
+   */
+  static getServerlessConfig(configService: ConfigService): EnvironmentLoggingConfig {
+    const structuredFormat = winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.errors({ stack: true }),
+      winston.format.json(),
+    );
+
+    const transports: winston.transport[] = [
+      // Console only - no file system access in serverless
+      new winston.transports.Console({
+        level: configService.get('LOG_LEVEL', 'info'),
+        format: structuredFormat,
+      }),
+    ];
+
+    return {
+      level: configService.get('LOG_LEVEL', 'info'),
+      enableConsole: true,
+      enableFiles: false, // No file system access
+      enableStructuredLogging: true,
+      enablePerformanceLogging: true,
+      enableDebugLogging: false,
+      transports,
+    };
+  }
+
+  /**
    * Get configuration based on environment
    */
   static getConfigForEnvironment(configService: ConfigService): EnvironmentLoggingConfig {
     const environment = configService.get('NODE_ENV', 'development');
+    const isServerless = configService.get('VERCEL', 'false') === '1' ||
+                        configService.get('AWS_LAMBDA_FUNCTION_NAME') ||
+                        configService.get('SERVERLESS', 'false') === 'true';
+
+    // Check for serverless environment first
+    if (isServerless) {
+      return this.getServerlessConfig(configService);
+    }
 
     switch (environment) {
       case 'production':
