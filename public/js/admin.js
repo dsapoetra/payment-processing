@@ -91,9 +91,7 @@ class AdminDashboard {
         const user = localStorage.getItem('user');
         const tenant = localStorage.getItem('tenant');
 
-        console.log('Auth check - Token exists:', !!token);
-        console.log('Auth check - User exists:', !!user);
-        console.log('Auth check - Tenant exists:', !!tenant);
+        // Auth check completed
 
         // Update instance variables
         this.token = token;
@@ -825,15 +823,7 @@ class AdminDashboard {
             }
         };
 
-        console.log('API Call:', {
-            url,
-            method: options.method || 'GET',
-            headers: defaultOptions.headers,
-            hasToken: !!this.token,
-            hasTenant: !!this.tenant,
-            tenantId: this.tenant?.id,
-            apiKey: this.tenant?.apiKey ? 'present' : 'missing'
-        });
+        // Making API call
 
         const response = await fetch(url, { ...defaultOptions, ...options });
 
@@ -2247,10 +2237,7 @@ class AdminDashboard {
 
     async loadMerchants() {
         try {
-            console.log('Loading merchants...');
-            console.log('Token:', this.token);
-            console.log('User:', this.user);
-            console.log('Tenant:', this.tenant);
+            // Loading merchants...
 
             const response = await this.apiCall('/merchants');
             console.log('Raw API response:', response);
@@ -2990,10 +2977,7 @@ function testLogout() {
 function logout() {
     console.log('=== LOGOUT CALLED ===');
 
-    // Check what's in storage BEFORE clearing
-    console.log('BEFORE CLEAR - Token:', !!localStorage.getItem('authToken'));
-    console.log('BEFORE CLEAR - User:', !!localStorage.getItem('user'));
-    console.log('BEFORE CLEAR - Tenant:', !!localStorage.getItem('tenant'));
+    // Clearing authentication data
 
     try {
         // Clear specific items first
@@ -3003,21 +2987,14 @@ function logout() {
         localStorage.removeItem('tenant');
         localStorage.removeItem('refreshToken');
 
-        // Check after specific removal
-        console.log('AFTER SPECIFIC REMOVAL - Token:', !!localStorage.getItem('authToken'));
-        console.log('AFTER SPECIFIC REMOVAL - User:', !!localStorage.getItem('user'));
-        console.log('AFTER SPECIFIC REMOVAL - Tenant:', !!localStorage.getItem('tenant'));
+        // Items removed from localStorage
 
         // Clear all storage as backup
         console.log('Clearing all storage...');
         localStorage.clear();
         sessionStorage.clear();
 
-        // Check after clear all
-        console.log('AFTER CLEAR ALL - Token:', !!localStorage.getItem('authToken'));
-        console.log('AFTER CLEAR ALL - User:', !!localStorage.getItem('user'));
-        console.log('AFTER CLEAR ALL - Tenant:', !!localStorage.getItem('tenant'));
-        console.log('AFTER CLEAR ALL - localStorage length:', localStorage.length);
+        // All storage cleared
 
         // Clear cookies
         document.cookie.split(";").forEach(function(c) {

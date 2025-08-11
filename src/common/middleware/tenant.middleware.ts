@@ -49,16 +49,7 @@ export class TenantMiddleware implements NestMiddleware {
 
       this.logger.debug(
         `Tenant middleware processing: ${req.method} ${req.originalUrl}`,
-        'TenantMiddleware',
-        {
-          url: req.originalUrl,
-          method: req.method,
-          headers: {
-            'x-tenant-id': req.get('X-Tenant-ID'),
-            'x-api-key': req.get('X-API-Key') ? 'present' : 'missing',
-            host: req.get('host')
-          }
-        }
+        'TenantMiddleware'
       );
 
       // Try to get tenant from subdomain
@@ -109,14 +100,7 @@ export class TenantMiddleware implements NestMiddleware {
           'Tenant not found or inactive',
           '',
           'TenantMiddleware',
-          {
-            url: req.originalUrl,
-            headers: {
-              'x-tenant-id': req.get('X-Tenant-ID'),
-              'x-api-key': req.get('X-API-Key') ? 'present' : 'missing',
-              host: req.get('host')
-            }
-          }
+          { url: req.originalUrl }
         );
         throw new BadRequestException('Tenant not found or inactive');
       }
@@ -149,14 +133,7 @@ export class TenantMiddleware implements NestMiddleware {
         `Tenant middleware error: ${error.message}`,
         error.stack,
         'TenantMiddleware',
-        {
-          url: req.originalUrl,
-          error: error.message,
-          headers: {
-            'x-tenant-id': req.get('X-Tenant-ID'),
-            'x-api-key': req.get('X-API-Key') ? 'present' : 'missing'
-          }
-        }
+        { url: req.originalUrl, error: error.message }
       );
 
       if (error instanceof BadRequestException || error instanceof NotFoundException) {
