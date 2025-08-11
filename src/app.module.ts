@@ -38,7 +38,7 @@ import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 
     // Static file serving for UI
     ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'public'),
+      rootPath: join(__dirname, '..', 'public'),
       serveRoot: '/ui',
       serveStaticOptions: {
         index: 'index.html',

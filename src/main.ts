@@ -70,9 +70,17 @@ async function bootstrap() {
     }),
   );
 
-  // API prefix
+  // API prefix - exclude static routes and health checks
   const apiPrefix = configService.get('API_PREFIX', 'api/v1');
-  app.setGlobalPrefix(apiPrefix);
+  app.setGlobalPrefix(apiPrefix, {
+    exclude: [
+      '/ui/(.*)',
+      '/health',
+      '/swagger/(.*)',
+      '/',
+      '/admin'
+    ]
+  });
 
   // Setup Swagger documentation
   setupSwagger(app);
