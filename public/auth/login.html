@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Payment Processing Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        body {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        .auth-header {
+            background: var(--secondary-gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .auth-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .auth-header p {
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        .auth-body {
+            padding: 3rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-auth {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .btn-auth:disabled {
+            opacity: 0.6;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary-auth {
+            background: rgba(108, 117, 125, 0.1);
+            border: 2px solid #6c757d;
+            color: #6c757d;
+        }
+
+        .btn-secondary-auth:hover {
+            background: #6c757d;
+            color: white;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #dee2e6;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-success {
+            background: rgba(72, 187, 120, 0.1);
+            color: #2d7738;
+            border-left: 4px solid #48bb78;
+        }
+
+        .alert-danger {
+            background: rgba(245, 101, 101, 0.1);
+            color: #c53030;
+            border-left: 4px solid #f56565;
+        }
+
+        .alert-info {
+            background: rgba(79, 172, 254, 0.1);
+            color: #2b6cb0;
+            border-left: 4px solid #4facfe;
+        }
+
+        .demo-credentials {
+            background: rgba(79, 172, 254, 0.1);
+            border: 1px solid rgba(79, 172, 254, 0.3);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-credentials h6 {
+            color: #2b6cb0;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-credentials small {
+            color: #4a5568;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .quick-actions {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .quick-actions h6 {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .quick-action-btn {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            text-decoration: none;
+            color: #495057;
+        }
+
+        .quick-action-btn:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+            color: #495057;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .auth-body {
+                padding: 2rem 1.5rem;
+            }
+            
+            .auth-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <h1>
+                <i class="fas fa-credit-card me-2"></i>
+                Welcome Back
+            </h1>
+            <p>Sign in to your Payment Processing Platform account</p>
+        </div>
+        
+        <div class="auth-body">
+            <!-- Alert Messages -->
+            <div id="alert-container"></div>
+            
+            <!-- Demo Credentials Info -->
+            <div class="demo-credentials">
+                <h6><i class="fas fa-info-circle me-2"></i>Demo Mode Available</h6>
+                <small>
+                    Click "Create Demo Account" below to automatically set up a demo environment,
+                    or use the registration form to create a real account.
+                </small>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form">
+                <div class="mb-3">
+                    <label for="email" class="form-label">
+                        <i class="fas fa-envelope me-2"></i>Email Address
+                    </label>
+                    <input type="email" class="form-control" id="email" name="email" required
+                           autocomplete="email" placeholder="Enter your email address">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock me-2"></i>Password
+                    </label>
+                    <input type="password" class="form-control" id="password" name="password" required
+                           autocomplete="current-password" placeholder="Enter your password">
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remember-me">
+                    <label class="form-check-label" for="remember-me">
+                        Remember me
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-auth" id="login-btn">
+                    <span class="loading-spinner" id="login-spinner"></span>
+                    <i class="fas fa-sign-in-alt me-2"></i>
+                    Sign In
+                </button>
+            </form>
+
+            <div class="divider">
+                <span>or</span>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <button class="btn btn-secondary-auth" id="demo-account-btn">
+                        <i class="fas fa-play me-2"></i>
+                        Create Demo Account
+                    </button>
+                </div>
+                <div class="col-md-6 mb-2">
+                    <a href="register.html" class="btn btn-secondary-auth">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Create New Account
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Actions Panel -->
+            <div class="quick-actions">
+                <h6><i class="fas fa-rocket me-2"></i>Quick Access</h6>
+                <a href="/ui" class="quick-action-btn">
+                    <i class="fas fa-home me-2"></i>
+                    <strong>Platform Home</strong>
+                    <small class="d-block text-muted">Explore the platform without signing in</small>
+                </a>
+                <a href="/swagger/docs" class="quick-action-btn">
+                    <i class="fas fa-book me-2"></i>
+                    <strong>API Documentation</strong>
+                    <small class="d-block text-muted">Browse the complete API reference</small>
+                </a>
+                <a href="/ui/demo" class="quick-action-btn">
+                    <i class="fas fa-play-circle me-2"></i>
+                    <strong>Interactive Demo</strong>
+                    <small class="d-block text-muted">Try the payment processing demo</small>
+                </a>
+            </div>
+
+            <!-- Footer Links -->
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    <a href="#" class="text-decoration-none me-3">Forgot Password?</a>
+                    <a href="#" class="text-decoration-none me-3">Support</a>
+                    <a href="#" class="text-decoration-none">Privacy Policy</a>
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/auth.js"></script>
+</body>
+</html>

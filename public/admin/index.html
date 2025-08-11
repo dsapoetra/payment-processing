@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Processing Platform - Admin Dashboard</title>
+
+    <!-- Prevent caching for security -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../css/admin.css" rel="stylesheet">
+    <style>
+        /* ALWAYS hide content until authentication is verified */
+        body {
+            display: none !important;
+        }
+
+        body.authenticated {
+            display: block !important;
+        }
+
+        /* Prevent caching of this page */
+        .auth-required {
+            cache-control: no-cache, no-store, must-revalidate;
+            pragma: no-cache;
+            expires: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-credit-card me-2"></i>
+                Payment Processing Platform
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#dashboard" data-section="dashboard">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#transactions" data-section="transactions">
+                            <i class="fas fa-exchange-alt me-1"></i>Transactions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#merchants" data-section="merchants">
+                            <i class="fas fa-store me-1"></i>Merchants
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#users" data-section="users">
+                            <i class="fas fa-users me-1"></i>Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#analytics" data-section="analytics">
+                            <i class="fas fa-chart-bar me-1"></i>Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#security" data-section="security">
+                            <i class="fas fa-shield-alt me-1"></i>Security
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>Admin
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="showProfile()">Profile</a></li>
+                            <li><a class="dropdown-item" href="#" id="logout-btn">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section" class="content-section">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard Overview</h2>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-danger" id="emergency-logout">
+                        <i class="fas fa-sign-out-alt me-2"></i>Emergency Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPI Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="total-transactions">Loading...</h4>
+                                    <p class="mb-0">Total Transactions</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-exchange-alt fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="total-volume">Loading...</h4>
+                                    <p class="mb-0">Transaction Volume</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-dollar-sign fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="active-merchants">Loading...</h4>
+                                    <p class="mb-0">Active Merchants</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-store fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 id="avg-risk-score">Loading...</h4>
+                                    <p class="mb-0">Avg Risk Score</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-shield-alt fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-line me-2"></i>Transaction Volume Over Time</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="volumeChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-pie me-2"></i>Payment Methods</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="paymentMethodChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-clock me-2"></i>Recent Transactions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="recent-transactions">
+                                <div class="text-center">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i>Security Alerts</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="security-alerts">
+                                <div class="text-center">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Section -->
+        <div id="transactions-section" class="content-section" style="display: none;">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h2><i class="fas fa-exchange-alt me-2"></i>Transaction Management</h2>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button class="btn btn-outline-info me-2" id="refresh-transactions-btn">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                    <button class="btn btn-outline-secondary me-2" data-bs-toggle="collapse" data-bs-target="#transaction-filters">
+                        <i class="fas fa-filter me-2"></i>Filters
+                    </button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createTransactionModal">
+                        <i class="fas fa-plus me-2"></i>Create Transaction
+                    </button>
+                </div>
+            </div>
+
+            <!-- Advanced Filters -->
+            <div class="collapse mb-4" id="transaction-filters">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="fas fa-search me-2"></i>Advanced Filters</h6>
+                    </div>
+                    <div class="card-body">
+                        <form id="transaction-filter-form">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="filter-status" class="form-label">Status</label>
+                                    <select class="form-select" id="filter-status">
+                                        <option value="">All Statuses</option>
+                                        <option value="pending">Pending</option>
+                                        <option value="processing">Processing</option>
+                                        <option value="completed">Completed</option>
+                                        <option value="failed">Failed</option>
+                                        <option value="cancelled">Cancelled</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="filter-merchant" class="form-label">Merchant</label>
+                                    <select class="form-select" id="filter-merchant">
+                                        <option value="">All Merchants</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="filter-payment-method" class="form-label">Payment Method</label>
+                                    <select class="form-select" id="filter-payment-method">
+                                        <option value="">All Methods</option>
+                                        <option value="credit_card">Credit Card</option>
+                                        <option value="debit_card">Debit Card</option>
+                                        <option value="bank_transfer">Bank Transfer</option>
+                                        <option value="digital_wallet">Digital Wallet</option>
+                                        <option value="cryptocurrency">Cryptocurrency</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="filter-customer-email" class="form-label">Customer Email</label>
+                                    <input type="email" class="form-control" id="filter-customer-email" placeholder="customer@example.com">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-3">
+                                    <label for="filter-start-date" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" id="filter-start-date">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="filter-end-date" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="filter-end-date">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="filter-min-amount" class="form-label">Min Amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="filter-min-amount" step="0.01" min="0">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="filter-max-amount" class="form-label">Max Amount</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">$</span>
+                                        <input type="number" class="form-control" id="filter-max-amount" step="0.01" min="0">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-primary" onclick="dashboard.applyTransactionFilters()">
+                                        <i class="fas fa-search me-2"></i>Apply Filters
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary ms-2" onclick="dashboard.clearTransactionFilters()">
+                                        <i class="fas fa-times me-2"></i>Clear Filters
+                                    </button>
+                                    <button type="button" class="btn btn-outline-info ms-2" onclick="dashboard.exportTransactions()">
+                                        <i class="fas fa-download me-2"></i>Export CSV
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Filters -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" id="transaction-status-filter">
+                                <option value="">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                                <option value="failed">Failed</option>
+                                <option value="refunded">Refunded</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Date Range</label>
+                            <input type="date" class="form-control" id="transaction-date-from">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <input type="date" class="form-control" id="transaction-date-to">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-primary w-100" onclick="filterTransactions()">
+                                <i class="fas fa-search me-1"></i>Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="transactions-table">
+                            <thead>
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Merchant</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Payment Method</th>
+                                    <th>Risk Score</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactions-tbody">
+                                <tr>
+                                    <td colspan="8" class="text-center">
+                                        <div class="spinner-border" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Merchants Section -->
+        <div id="merchants-section" class="content-section" style="display: none;">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h2><i class="fas fa-store me-2"></i>Merchant Management</h2>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button class="btn btn-outline-secondary me-2" id="refresh-merchants-btn">
+                        <i class="fas fa-sync-alt me-2"></i>Refresh
+                    </button>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createMerchantModal">
+                        <i class="fas fa-plus me-2"></i>Create Merchant
+                    </button>
+                </div>
+            </div>
+
+            <!-- Merchants Table -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped merchants-table" id="merchants-table">
+                            <thead>
+                                <tr>
+                                    <th>Merchant ID</th>
+                                    <th>Business Name</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>KYC Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="merchants-table-body">
+                                <tr>
+                                    <td colspan="7" class="text-center">Loading merchants...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Users Section -->
+        <div id="users-section" class="content-section" style="display: none;">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h2><i class="fas fa-users me-2"></i>User Management</h2>
+                </div>
+                <div class="col-md-6 text-end">
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createUserModal">
+                        <i class="fas fa-user-plus me-2"></i>Add User
+                    </button>
+                </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Last Login</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <tr>
+                                    <td colspan="7" class="text-center">Loading users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="analytics-section" class="content-section" style="display: none;">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2><i class="fas fa-chart-bar me-2"></i>Advanced Analytics</h2>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-outline-primary" onclick="dashboard.loadAnalytics()">
+                        <i class="fas fa-sync me-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analytics KPIs -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="kpi-icon text-primary">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <h3 id="analytics-total-volume" class="kpi-value">--</h3>
+                            <p class="kpi-label">Total Volume</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="kpi-icon text-info">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <h3 id="analytics-transaction-count" class="kpi-value">--</h3>
+                            <p class="kpi-label">Transactions</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="kpi-icon text-success">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <h3 id="analytics-success-rate" class="kpi-value">--</h3>
+                            <p class="kpi-label">Success Rate</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="kpi-icon text-warning">
+                                <i class="fas fa-calculator"></i>
+                            </div>
+                            <h3 id="analytics-avg-transaction" class="kpi-value">--</h3>
+                            <p class="kpi-label">Avg Transaction</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Top Merchants -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-chart-line me-2"></i>Transaction Trends (24 Hours)
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="transaction-chart">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Loading transaction trends...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-trophy me-2"></i>Top Merchants
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="top-merchants-list">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Loading top merchants...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Metrics -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-money-bill-wave me-2"></i>Revenue Metrics
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-4">
+                                    <div class="border-end">
+                                        <h4 id="revenue-today" class="text-success">--</h4>
+                                        <small class="text-muted">Today's Revenue</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="border-end">
+                                        <h4 id="revenue-month" class="text-primary">--</h4>
+                                        <small class="text-muted">This Month</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <h4 id="revenue-growth" class="text-info">--</h4>
+                                    <small class="text-muted">Monthly Growth</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="security-section" class="content-section" style="display: none;">
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <h2><i class="fas fa-shield-alt me-2"></i>Security Center</h2>
+                </div>
+                <div class="col-md-4 text-end">
+                    <button class="btn btn-outline-primary" onclick="dashboard.refreshSecurityData()">
+                        <i class="fas fa-sync me-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+
+            <!-- Security KPIs -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="kpi-icon text-success">
+                                <i class="fas fa-shield-check"></i>
+                            </div>
+                            <h3 id="security-score" class="kpi-value">--</h3>
+                            <p class="kpi-label">Security Score</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="kpi-icon text-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <h3 id="active-alerts" class="kpi-value">--</h3>
+                            <p class="kpi-label">Active Alerts</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="kpi-icon text-danger">
+                                <i class="fas fa-ban"></i>
+                            </div>
+                            <h3 id="blocked-transactions" class="kpi-value">--</h3>
+                            <p class="kpi-label">Blocked Today</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <div class="kpi-icon text-info">
+                                <i class="fas fa-certificate"></i>
+                            </div>
+                            <h3 id="compliance-status" class="kpi-value">--</h3>
+                            <p class="kpi-label">PCI Compliance</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Alerts and Compliance -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-bell me-2"></i>Recent Security Alerts
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="security-alerts-table">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Loading security alerts...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-tasks me-2"></i>Compliance Status
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="compliance-checklist">
+                                <div class="text-center">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2">Loading compliance data...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Transaction Modal -->
+    <div class="modal fade" id="createTransactionModal" tabindex="-1" aria-labelledby="createTransactionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createTransactionModalLabel">
+                        <i class="fas fa-plus me-2"></i>Create New Transaction
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="create-transaction-form">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="tx-merchant" class="form-label">Merchant *</label>
+                                <select class="form-select" id="tx-merchant" required>
+                                    <option value="">Select Merchant</option>
+                                </select>
+                                <div class="form-text">Select the merchant for this transaction</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tx-type" class="form-label">Transaction Type *</label>
+                                <select class="form-select" id="tx-type" required>
+                                    <option value="payment">Payment</option>
+                                    <option value="refund">Refund</option>
+                                    <option value="adjustment">Adjustment</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="tx-amount" class="form-label">Amount *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="tx-amount" step="0.01" min="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tx-currency" class="form-label">Currency *</label>
+                                <select class="form-select" id="tx-currency" required>
+                                    <option value="USD">USD - US Dollar</option>
+                                    <option value="EUR">EUR - Euro</option>
+                                    <option value="GBP">GBP - British Pound</option>
+                                    <option value="JPY">JPY - Japanese Yen</option>
+                                    <option value="CAD">CAD - Canadian Dollar</option>
+                                    <option value="AUD">AUD - Australian Dollar</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="tx-payment-method" class="form-label">Payment Method *</label>
+                                <select class="form-select" id="tx-payment-method" required>
+                                    <option value="credit_card">Credit Card</option>
+                                    <option value="debit_card">Debit Card</option>
+                                    <option value="bank_transfer">Bank Transfer</option>
+                                    <option value="digital_wallet">Digital Wallet</option>
+                                    <option value="cryptocurrency">Cryptocurrency</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tx-customer-email" class="form-label">Customer Email *</label>
+                                <input type="email" class="form-control" id="tx-customer-email" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="tx-description" class="form-label">Description *</label>
+                            <input type="text" class="form-control" id="tx-description" required
+                                   placeholder="Enter transaction description">
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="tx-customer-phone" class="form-label">Customer Phone</label>
+                                <input type="tel" class="form-control" id="tx-customer-phone"
+                                       placeholder="+1-555-123-4567">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="tx-order-id" class="form-label">Order ID</label>
+                                <input type="text" class="form-control" id="tx-order-id"
+                                       placeholder="Optional order reference">
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> The transaction will be processed through the fraud detection system
+                            and may be flagged for review based on risk assessment.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="create-transaction-btn">
+                        <i class="fas fa-paper-plane me-2"></i>Create Transaction
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Merchant Modal -->
+    <div class="modal fade" id="createMerchantModal" tabindex="-1" aria-labelledby="createMerchantModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createMerchantModalLabel">
+                        <i class="fas fa-store me-2"></i>Create New Merchant
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="create-merchant-form">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="merchant-business-name" class="form-label">Business Name *</label>
+                                <input type="text" class="form-control" id="merchant-business-name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="merchant-legal-name" class="form-label">Legal Name *</label>
+                                <input type="text" class="form-control" id="merchant-legal-name" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="merchant-email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="merchant-email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="merchant-phone" class="form-label">Phone Number *</label>
+                                <input type="tel" class="form-control" id="merchant-phone" required
+                                       placeholder="+1-555-123-4567">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="merchant-type" class="form-label">Business Type *</label>
+                                <select class="form-select" id="merchant-type" required>
+                                    <option value="">Select Type</option>
+                                    <option value="business">Business</option>
+                                    <option value="individual">Individual</option>
+                                    <option value="non_profit">Non-Profit</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="merchant-website" class="form-label">Website</label>
+                                <input type="url" class="form-control" id="merchant-website"
+                                       placeholder="https://example.com">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="merchant-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="merchant-description" rows="2"
+                                      placeholder="Brief description of the business"></textarea>
+                        </div>
+
+                        <h6 class="mb-3"><i class="fas fa-map-marker-alt me-2"></i>Business Address</h6>
+
+                        <div class="mb-3">
+                            <label for="merchant-street" class="form-label">Street Address *</label>
+                            <input type="text" class="form-control" id="merchant-street" required>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="merchant-city" class="form-label">City *</label>
+                                <input type="text" class="form-control" id="merchant-city" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="merchant-state" class="form-label">State/Province *</label>
+                                <input type="text" class="form-control" id="merchant-state" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="merchant-postal-code" class="form-label">Postal Code *</label>
+                                <input type="text" class="form-control" id="merchant-postal-code" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="merchant-country" class="form-label">Country *</label>
+                            <select class="form-select" id="merchant-country" required>
+                                <option value="">Select Country</option>
+                                <!-- Countries will be populated dynamically by countries.js -->
+                            </select>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> The merchant will be created in "pending" status and will need
+                            to be activated before processing transactions. KYC verification may be required.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="create-merchant-btn">
+                        <i class="fas fa-store me-2"></i>Create Merchant
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Details Modal -->
+    <div class="modal fade" id="transactionDetailsModal" tabindex="-1" aria-labelledby="transactionDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="transactionDetailsModalLabel">
+                        <i class="fas fa-eye me-2"></i>Transaction Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="transaction-details-content">
+                        <div class="text-center">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Loading transaction details...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-outline-warning" id="refund-transaction-btn" style="display: none;">
+                        <i class="fas fa-undo me-2"></i>Refund Transaction
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Risk Score Explanation Modal -->
+    <div class="modal fade" id="riskExplanationModal" tabindex="-1" aria-labelledby="riskExplanationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="riskExplanationModalLabel">
+                        <i class="fas fa-shield-alt me-2"></i>Risk Score Explanation
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="risk-explanation-content">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refund Transaction Modal -->
+    <div class="modal fade" id="refundModal" tabindex="-1" aria-labelledby="refundModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="refundModalLabel">
+                        <i class="fas fa-undo me-2"></i>Process Refund
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="refund-form">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Warning:</strong> This action cannot be undone. Please verify the refund details carefully.
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Transaction ID:</strong></label>
+                            <div id="refund-transaction-id" class="form-control-plaintext"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><strong>Original Amount:</strong></label>
+                            <div id="refund-original-amount" class="form-control-plaintext"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="refund-amount" class="form-label">Refund Amount *</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="refund-amount" step="0.01" min="0.01" required>
+                            </div>
+                            <div class="form-text">Enter the amount to refund (maximum: original transaction amount)</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="refund-reason" class="form-label">Reason for Refund *</label>
+                            <select class="form-select" id="refund-reason" required>
+                                <option value="">Select a reason...</option>
+                                <option value="customer_request">Customer Request</option>
+                                <option value="duplicate_charge">Duplicate Charge</option>
+                                <option value="fraud_suspected">Fraud Suspected</option>
+                                <option value="product_not_delivered">Product Not Delivered</option>
+                                <option value="product_defective">Product Defective</option>
+                                <option value="billing_error">Billing Error</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="refund-notes" class="form-label">Additional Notes</label>
+                            <textarea class="form-control" id="refund-notes" rows="3" placeholder="Optional additional details..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning" id="process-refund-btn">
+                        <i class="fas fa-undo me-2"></i>Process Refund
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create User Modal -->
+    <div class="modal fade" id="createUserModal" tabindex="-1" aria-labelledby="createUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createUserModalLabel">
+                        <i class="fas fa-user-plus me-2"></i>Add New User
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="create-user-form">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="user-first-name" class="form-label">First Name *</label>
+                                <input type="text" class="form-control" id="user-first-name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="user-last-name" class="form-label">Last Name *</label>
+                                <input type="text" class="form-control" id="user-last-name" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="user-email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="user-email" autocomplete="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="user-phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="user-phone">
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="user-role" class="form-label">Role *</label>
+                                <select class="form-select" id="user-role" required>
+                                    <option value="">Select Role</option>
+                                    <option value="tenant_admin">Tenant Admin</option>
+                                    <option value="merchant_admin">Merchant Admin</option>
+                                    <option value="merchant_user">Merchant User</option>
+                                    <option value="analyst">Analyst</option>
+                                    <option value="support">Support</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="user-password" class="form-label">Temporary Password *</label>
+                                <input type="password" class="form-control" id="user-password" autocomplete="new-password" required>
+                                <div class="form-text">User will be required to change password on first login</div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> The user will receive an email with login instructions and will be required to change their password on first login.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="create-user-btn">
+                        <i class="fas fa-user-plus me-2"></i>Create User
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Immediate Auth Check Script -->
+    <script>
+        // IMMEDIATE AUTHENTICATION CHECK - BLOCKS PAGE LOAD
+        console.log('=== IMMEDIATE AUTH CHECK ===');
+
+        function checkAuthImmediate() {
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('user');
+            const tenant = localStorage.getItem('tenant');
+
+            console.log('Immediate check - Token:', !!token);
+            console.log('Immediate check - User:', !!user);
+            console.log('Immediate check - Tenant:', !!tenant);
+
+            if (!token || !user || !tenant) {
+                console.log('IMMEDIATE AUTH FAILED - Redirecting');
+                // Hide page immediately
+                document.body.style.display = 'none';
+                alert('Authentication required. You will be redirected to login.');
+                window.location.replace('/ui/auth/login.html?redirect=' + encodeURIComponent(window.location.pathname));
+                return false;
+            }
+
+            console.log('IMMEDIATE AUTH PASSED');
+            return true;
+        }
+
+        // Run check immediately
+        if (!checkAuthImmediate()) {
+            // Stop further script execution
+            throw new Error('Authentication failed');
+        }
+
+        // Add event listeners for page visibility changes
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                console.log('Page became visible - checking auth');
+                if (!checkAuthImmediate()) {
+                    return;
+                }
+            }
+        });
+
+        // Check auth when page gains focus
+        window.addEventListener('focus', function() {
+            console.log('Window gained focus - checking auth');
+            if (!checkAuthImmediate()) {
+                return;
+            }
+        });
+
+        // Prevent back button caching
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                console.log('Page loaded from cache - checking auth');
+                if (!checkAuthImmediate()) {
+                    return;
+                }
+            }
+        });
+    </script>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/countries.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

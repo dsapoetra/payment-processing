@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Registration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+        
+        .test-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin: 0 10px;
+        }
+        
+        .step.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-container">
+            <h2 class="text-center mb-4">Test Registration Steps</h2>
+            
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step active" id="step-1">1</div>
+                <div class="step" id="step-2">2</div>
+                <div class="step" id="step-3">3</div>
+            </div>
+            
+            <!-- Step 1 -->
+            <div class="form-section active" id="section-1">
+                <h4>Step 1: Personal Information</h4>
+                <div class="mb-3">
+                    <label class="form-label">First Name</label>
+                    <input type="text" class="form-control" id="firstName" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Last Name</label>
+                    <input type="text" class="form-control" id="lastName" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                <button type="button" class="btn btn-primary" id="next-to-2">Next Step</button>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="form-section" id="section-2">
+                <h4>Step 2: Organization</h4>
+                <div class="mb-3">
+                    <label class="form-label">Organization Name</label>
+                    <input type="text" class="form-control" id="organizationName" required>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-secondary" id="back-to-1">Back</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary" id="next-to-3">Next Step</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="form-section" id="section-3">
+                <h4>Step 3: Review</h4>
+                <p>Review your information and submit.</p>
+                <div class="row">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-secondary" id="back-to-2">Back</button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-success" id="submit-form">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        class SimpleRegistration {
+            constructor() {
+                this.currentStep = 1;
+                this.init();
+            }
+            
+            init() {
+                console.log('SimpleRegistration initialized');
+                this.setupEventListeners();
+            }
+            
+            setupEventListeners() {
+                document.getElementById('next-to-2').addEventListener('click', () => {
+                    console.log('Next to 2 clicked');
+                    this.goToStep(2);
+                });
+                
+                document.getElementById('next-to-3').addEventListener('click', () => {
+                    console.log('Next to 3 clicked');
+                    this.goToStep(3);
+                });
+                
+                document.getElementById('back-to-1').addEventListener('click', () => {
+                    console.log('Back to 1 clicked');
+                    this.goToStep(1);
+                });
+                
+                document.getElementById('back-to-2').addEventListener('click', () => {
+                    console.log('Back to 2 clicked');
+                    this.goToStep(2);
+                });
+                
+                document.getElementById('submit-form').addEventListener('click', () => {
+                    console.log('Submit clicked');
+                    alert('Form submitted successfully!');
+                });
+            }
+            
+            goToStep(step) {
+                console.log('Going to step:', step);
+                
+                // Hide all sections
+                document.querySelectorAll('.form-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Show current section
+                document.getElementById(`section-${step}`).classList.add('active');
+                
+                // Update step indicators
+                for (let i = 1; i <= 3; i++) {
+                    const stepEl = document.getElementById(`step-${i}`);
+                    stepEl.classList.remove('active', 'completed');
+                    
+                    if (i < step) {
+                        stepEl.classList.add('completed');
+                    } else if (i === step) {
+                        stepEl.classList.add('active');
+                    }
+                }
+                
+                this.currentStep = step;
+            }
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded');
+            window.simpleRegistration = new SimpleRegistration();
+        });
+    </script>
+</body>
+</html>

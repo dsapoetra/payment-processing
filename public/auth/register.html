@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Payment Processing Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        body {
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px 0;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .auth-header {
+            background: var(--success-gradient);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .auth-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .auth-header p {
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        .auth-body {
+            padding: 3rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-auth {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .btn-auth:disabled {
+            opacity: 0.6;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary-auth {
+            background: rgba(108, 117, 125, 0.1);
+            border: 2px solid #6c757d;
+            color: #6c757d;
+        }
+
+        .btn-secondary-auth:hover {
+            background: #6c757d;
+            color: white;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e9ecef;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin: 0 10px;
+            position: relative;
+        }
+
+        .step.active {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .step.completed {
+            background: #28a745;
+            color: white;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 20px;
+            height: 2px;
+            background: #e9ecef;
+            transform: translateY(-50%);
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step.completed::after {
+            background: #28a745;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            color: #495057;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-success {
+            background: rgba(72, 187, 120, 0.1);
+            color: #2d7738;
+            border-left: 4px solid #48bb78;
+        }
+
+        .alert-danger {
+            background: rgba(245, 101, 101, 0.1);
+            color: #c53030;
+            border-left: 4px solid #f56565;
+        }
+
+        .alert-info {
+            background: rgba(79, 172, 254, 0.1);
+            color: #2b6cb0;
+            border-left: 4px solid #4facfe;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .password-strength {
+            margin-top: 0.5rem;
+        }
+
+        .strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            width: 0%;
+        }
+
+        .strength-weak { background: #f56565; width: 25%; }
+        .strength-fair { background: #ed8936; width: 50%; }
+        .strength-good { background: #48bb78; width: 75%; }
+        .strength-strong { background: #38a169; width: 100%; }
+
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .auth-body {
+                padding: 2rem 1.5rem;
+            }
+            
+            .auth-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .step {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+                margin: 0 5px;
+            }
+            
+            .step::after {
+                width: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>
+                    <i class="fas fa-user-plus me-2"></i>
+                    Create Your Account
+                </h1>
+                <p>Join the Payment Processing Platform and start accepting payments</p>
+            </div>
+            
+            <div class="auth-body">
+                <!-- Alert Messages -->
+                <div id="alert-container"></div>
+                
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step active" id="step-1">1</div>
+                    <div class="step" id="step-2">2</div>
+                    <div class="step" id="step-3">3</div>
+                </div>
+
+                <!-- Registration Form -->
+                <form id="registration-form">
+                    <!-- Step 1: User Information -->
+                    <div class="form-section active" id="section-1">
+                        <h4 class="section-title">
+                            <i class="fas fa-user me-2"></i>Personal Information
+                        </h4>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" required 
+                                       placeholder="Enter your first name">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" name="lastName" required 
+                                       placeholder="Enter your last name">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">
+                                <i class="fas fa-envelope me-2"></i>Email Address
+                            </label>
+                            <input type="email" class="form-control" id="email" name="email" required 
+                                   placeholder="Enter your email address">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">
+                                <i class="fas fa-phone me-2"></i>Phone Number
+                            </label>
+                            <input type="tel" class="form-control" id="phone" name="phone" 
+                                   placeholder="Enter your phone number">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="password" class="form-label">
+                                <i class="fas fa-lock me-2"></i>Password
+                            </label>
+                            <input type="password" class="form-control" id="password" name="password" required 
+                                   placeholder="Create a strong password">
+                            <div class="password-strength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill" id="strength-fill"></div>
+                                </div>
+                                <small class="text-muted" id="strength-text">Password strength will appear here</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Confirm Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required 
+                                   placeholder="Confirm your password">
+                        </div>
+                        
+                        <button type="button" class="btn btn-auth" id="next-step-2">
+                            <i class="fas fa-arrow-right me-2"></i>
+                            Continue to Organization Setup
+                        </button>
+                    </div>
+
+                    <!-- Step 2: Organization Information -->
+                    <div class="form-section" id="section-2">
+                        <h4 class="section-title">
+                            <i class="fas fa-building me-2"></i>Organization Information
+                        </h4>
+                        
+                        <div class="mb-3">
+                            <label for="organizationName" class="form-label">
+                                <i class="fas fa-building me-2"></i>Organization Name
+                            </label>
+                            <input type="text" class="form-control" id="organizationName" name="organizationName" required 
+                                   placeholder="Enter your organization name">
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="organizationType" class="form-label">Organization Type</label>
+                                <select class="form-select" id="organizationType" name="organizationType" required>
+                                    <option value="">Select organization type</option>
+                                    <option value="startup">Startup</option>
+                                    <option value="small_business">Small Business</option>
+                                    <option value="enterprise">Enterprise</option>
+                                    <option value="non_profit">Non-Profit</option>
+                                    <option value="individual">Individual</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="industry" class="form-label">Industry</label>
+                                <select class="form-select" id="industry" name="industry">
+                                    <option value="">Select industry</option>
+                                    <option value="ecommerce">E-commerce</option>
+                                    <option value="saas">SaaS</option>
+                                    <option value="retail">Retail</option>
+                                    <option value="healthcare">Healthcare</option>
+                                    <option value="education">Education</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="website" class="form-label">
+                                <i class="fas fa-globe me-2"></i>Website (Optional)
+                            </label>
+                            <input type="url" class="form-control" id="website" name="website" 
+                                   placeholder="https://your-website.com">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Business Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" 
+                                      placeholder="Briefly describe your business"></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-secondary-auth" id="prev-step-1">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Back
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-auth" id="next-step-3">
+                                    <i class="fas fa-arrow-right me-2"></i>
+                                    Continue to Review
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Review and Submit -->
+                    <div class="form-section" id="section-3">
+                        <h4 class="section-title">
+                            <i class="fas fa-check-circle me-2"></i>Review and Confirm
+                        </h4>
+                        
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Please review your information before creating your account.
+                        </div>
+                        
+                        <div id="review-content">
+                            <!-- Review content will be populated by JavaScript -->
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                            <label class="form-check-label" for="terms">
+                                I agree to the <a href="#" class="text-decoration-none">Terms of Service</a> 
+                                and <a href="#" class="text-decoration-none">Privacy Policy</a>
+                            </label>
+                        </div>
+                        
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="marketing" name="marketing">
+                            <label class="form-check-label" for="marketing">
+                                I would like to receive updates and marketing communications
+                            </label>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-secondary-auth" id="prev-step-2">
+                                    <i class="fas fa-arrow-left me-2"></i>
+                                    Back
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="submit" class="btn btn-auth" id="register-btn">
+                                    <span class="loading-spinner" id="register-spinner"></span>
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    Create Account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Footer Links -->
+                <div class="text-center mt-4">
+                    <small class="text-muted">
+                        Already have an account? 
+                        <a href="login.html" class="text-decoration-none">Sign in here</a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/auth.js"></script>
+    <script>
+        // Simplified registration manager
+        class SimpleRegistrationManager {
+            constructor() {
+                this.currentStep = 1;
+                this.formData = {};
+                this.init();
+            }
+
+            init() {
+                console.log('Registration manager initialized');
+                this.setupEventListeners();
+                this.setupPasswordStrength();
+            }
+
+            setupEventListeners() {
+                // Step navigation
+                const nextStep2 = document.getElementById('next-step-2');
+                console.log('nextStep2 button found:', nextStep2);
+                if (nextStep2) {
+                    nextStep2.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        console.log('Next step 2 clicked');
+                        this.nextStep(2);
+                    });
+
+                    // Add a temporary bypass button for testing
+                    const bypassBtn = document.createElement('button');
+                    bypassBtn.textContent = 'BYPASS (Test)';
+                    bypassBtn.className = 'btn btn-warning ms-2';
+                    bypassBtn.onclick = (e) => {
+                        e.preventDefault();
+                        console.log('Bypass clicked - forcing step 2');
+                        this.currentStep = 2;
+                        this.showStep(2);
+                        this.updateStepIndicator();
+                    };
+                    nextStep2.parentNode.appendChild(bypassBtn);
+                } else {
+                    console.error('next-step-2 button not found!');
+                }
+
+                const nextStep3 = document.getElementById('next-step-3');
+                if (nextStep3) {
+                    nextStep3.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        console.log('Next step 3 clicked');
+                        this.nextStep(3);
+                    });
+                }
+
+                const prevStep1 = document.getElementById('prev-step-1');
+                if (prevStep1) {
+                    prevStep1.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        console.log('Previous step 1 clicked');
+                        this.previousStep(1);
+                    });
+                }
+
+                const prevStep2 = document.getElementById('prev-step-2');
+                if (prevStep2) {
+                    prevStep2.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        console.log('Previous step 2 clicked');
+                        this.previousStep(2);
+                    });
+                }
+
+                // Form submission
+                const form = document.getElementById('registration-form');
+                if (form) {
+                    form.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handleRegistration();
+                    });
+                }
+            }
+
+            setupPasswordStrength() {
+                const passwordField = document.getElementById('password');
+                if (passwordField) {
+                    passwordField.addEventListener('input', (e) => {
+                        this.updatePasswordStrength(e.target.value);
+                    });
+                }
+            }
+
+            nextStep(step) {
+                console.log('Moving to step:', step);
+                console.log('Current step:', this.currentStep);
+
+                // Simple validation - just check required fields in current step
+                const isValid = this.validateCurrentStep();
+                console.log('Validation result:', isValid);
+
+                if (isValid) {
+                    console.log('Validation passed, proceeding to step', step);
+                    this.collectStepData(this.currentStep);
+                    this.currentStep = step;
+                    this.showStep(step);
+                    this.updateStepIndicator();
+
+                    if (step === 3) {
+                        this.populateReview();
+                    }
+                } else {
+                    console.log('Validation failed');
+                    alert('Please fill in all required fields');
+                }
+            }
+
+            previousStep(step) {
+                console.log('Going back to step:', step);
+                this.currentStep = step;
+                this.showStep(step);
+                this.updateStepIndicator();
+            }
+
+            validateCurrentStep() {
+                console.log('Validating current step:', this.currentStep);
+                const section = document.getElementById(`section-${this.currentStep}`);
+                console.log('Section found:', section);
+
+                if (!section) {
+                    console.error('Section not found for step:', this.currentStep);
+                    return false;
+                }
+
+                const requiredFields = section.querySelectorAll('input[required], select[required]');
+                console.log('Required fields found:', requiredFields.length);
+
+                let isValid = true;
+
+                requiredFields.forEach((field, index) => {
+                    console.log(`Field ${index}: ${field.name || field.id} = "${field.value}"`);
+                    if (!field.value.trim()) {
+                        console.log(`Field ${field.name || field.id} is empty`);
+                        field.classList.add('is-invalid');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('is-invalid');
+                        field.classList.add('is-valid');
+                    }
+                });
+
+                console.log('Overall validation result:', isValid);
+                return isValid;
+            }
+
+            showStep(step) {
+                // Hide all sections
+                document.querySelectorAll('.form-section').forEach(section => {
+                    section.classList.remove('active');
+                });
+
+                // Show current section
+                const currentSection = document.getElementById(`section-${step}`);
+                if (currentSection) {
+                    currentSection.classList.add('active');
+                }
+            }
+
+            updateStepIndicator() {
+                for (let i = 1; i <= 3; i++) {
+                    const stepElement = document.getElementById(`step-${i}`);
+                    if (stepElement) {
+                        stepElement.classList.remove('active', 'completed');
+
+                        if (i < this.currentStep) {
+                            stepElement.classList.add('completed');
+                        } else if (i === this.currentStep) {
+                            stepElement.classList.add('active');
+                        }
+                    }
+                }
+            }
+
+            collectStepData(step) {
+                const section = document.getElementById(`section-${step}`);
+                const inputs = section.querySelectorAll('input, select, textarea');
+
+                inputs.forEach(input => {
+                    if (input.type === 'checkbox') {
+                        this.formData[input.name] = input.checked;
+                    } else {
+                        this.formData[input.name] = input.value;
+                    }
+                });
+            }
+
+            populateReview() {
+                const reviewContent = document.getElementById('review-content');
+                if (!reviewContent) return;
+
+                const reviewHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Personal Information</h6>
+                            <p><strong>Name:</strong> ${this.formData.firstName || ''} ${this.formData.lastName || ''}</p>
+                            <p><strong>Email:</strong> ${this.formData.email || ''}</p>
+                            <p><strong>Phone:</strong> ${this.formData.phone || 'Not provided'}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-primary">Organization Details</h6>
+                            <p><strong>Organization:</strong> ${this.formData.organizationName || ''}</p>
+                            <p><strong>Type:</strong> ${this.formData.organizationType || ''}</p>
+                            <p><strong>Industry:</strong> ${this.formData.industry || 'Not specified'}</p>
+                            <p><strong>Website:</strong> ${this.formData.website || 'Not provided'}</p>
+                        </div>
+                    </div>
+                `;
+
+                reviewContent.innerHTML = reviewHTML;
+            }
+
+            updatePasswordStrength(password) {
+                const strengthFill = document.getElementById('strength-fill');
+                const strengthText = document.getElementById('strength-text');
+
+                if (!strengthFill || !strengthText) return;
+
+                if (password.length === 0) {
+                    strengthText.textContent = 'Password strength will appear here';
+                    strengthFill.className = 'strength-fill';
+                    return;
+                }
+
+                let score = 0;
+                if (password.length >= 8) score++;
+                if (/[a-z]/.test(password)) score++;
+                if (/[A-Z]/.test(password)) score++;
+                if (/\d/.test(password)) score++;
+                if (/[!@#$%^&*(),.?":{}|<>\-_+=\[\]\\\/~`;']/.test(password)) score++;
+
+                strengthFill.className = 'strength-fill';
+
+                if (score <= 1) {
+                    strengthFill.classList.add('strength-weak');
+                    strengthText.textContent = 'Weak password';
+                    strengthText.style.color = '#f56565';
+                } else if (score <= 2) {
+                    strengthFill.classList.add('strength-fair');
+                    strengthText.textContent = 'Fair password';
+                    strengthText.style.color = '#ed8936';
+                } else if (score <= 3) {
+                    strengthFill.classList.add('strength-good');
+                    strengthText.textContent = 'Good password';
+                    strengthText.style.color = '#48bb78';
+                } else {
+                    strengthFill.classList.add('strength-strong');
+                    strengthText.textContent = 'Strong password';
+                    strengthText.style.color = '#38a169';
+                }
+            }
+
+            async handleRegistration() {
+                console.log('Handling registration...');
+                this.collectStepData(3);
+
+                if (!this.formData.terms) {
+                    alert('Please accept the Terms of Service to continue');
+                    return;
+                }
+
+                const registrationData = {
+                    email: this.formData.email,
+                    password: this.formData.password,
+                    firstName: this.formData.firstName,
+                    lastName: this.formData.lastName,
+                    phoneNumber: this.formData.phone,
+                    organizationName: this.formData.organizationName,
+                    organizationType: this.formData.organizationType,
+                    industry: this.formData.industry,
+                    website: this.formData.website,
+                    description: this.formData.description,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                };
+
+                try {
+                    const response = await fetch('/api/v1/auth/public-register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(registrationData)
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        alert('Account created successfully! Redirecting to login...');
+                        setTimeout(() => {
+                            window.location.href = '/ui/auth/login.html';
+                        }, 1500);
+                    } else {
+                        alert(result.message || 'Registration failed. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Registration error:', error);
+                    alert('Network error. Please check your connection and try again.');
+                }
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing registration');
+            window.registrationManager = new SimpleRegistrationManager();
+        });
+    </script>
+</body>
+</html>

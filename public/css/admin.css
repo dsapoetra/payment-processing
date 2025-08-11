@@ -1,0 +1,515 @@
+/* Admin Dashboard Styles */
+
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --success-color: #198754;
+    --info-color: #0dcaf0;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --dark-color: #212529;
+    --light-color: #f8f9fa;
+}
+
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navigation Enhancements */
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 0.375rem;
+}
+
+/* Card Enhancements */
+.card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    font-weight: 600;
+}
+
+/* KPI Cards */
+.card.bg-primary,
+.card.bg-success,
+.card.bg-info,
+.card.bg-warning {
+    background: linear-gradient(135deg, var(--primary-color), #0a58ca) !important;
+}
+
+.card.bg-success {
+    background: linear-gradient(135deg, var(--success-color), #146c43) !important;
+}
+
+.card.bg-info {
+    background: linear-gradient(135deg, var(--info-color), #0aa2c0) !important;
+}
+
+.card.bg-warning {
+    background: linear-gradient(135deg, var(--warning-color), #e6a700) !important;
+}
+
+/* Table Enhancements */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: var(--dark-color);
+    background-color: var(--light-color);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > td {
+    background-color: rgba(0, 0, 0, 0.025);
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-completed {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-failed {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-refunded {
+    background-color: #cff4fc;
+    color: #055160;
+}
+
+/* Risk Score Indicators */
+.risk-low {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.risk-medium {
+    color: var(--warning-color);
+    font-weight: 600;
+}
+
+.risk-high {
+    color: var(--danger-color);
+    font-weight: 600;
+}
+
+/* Loading States */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Animation Classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+/* Chart Container */
+.chart-container {
+    position: relative;
+    height: 300px;
+}
+
+/* Action Buttons */
+.btn-action {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 0.375rem;
+    margin: 0 0.125rem;
+}
+
+/* Merchant Action Buttons - Fix for overlapping buttons */
+.merchants-table .btn-group {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 2px;
+    min-width: 120px;
+}
+
+.merchants-table .btn-group .btn {
+    padding: 0.25rem 0.4rem;
+    font-size: 0.75rem;
+    border-radius: 0.25rem;
+    min-width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 1px;
+    white-space: nowrap;
+}
+
+.merchants-table .btn-group .btn i {
+    font-size: 0.7rem;
+}
+
+/* Ensure Actions column has enough width */
+.merchants-table th:last-child,
+.merchants-table td:last-child {
+    min-width: 140px;
+    width: 140px;
+}
+
+/* Specific button styling for better visibility */
+.merchants-table .approve-kyc-btn {
+    background-color: #198754;
+    border-color: #198754;
+    color: white;
+}
+
+.merchants-table .approve-kyc-btn:hover {
+    background-color: #157347;
+    border-color: #146c43;
+}
+
+.merchants-table .reject-kyc-btn {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.merchants-table .reject-kyc-btn:hover {
+    background-color: #bb2d3b;
+    border-color: #b02a37;
+}
+
+.merchants-table .activate-merchant-btn {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+
+.merchants-table .activate-merchant-btn:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+.merchants-table .start-kyc-btn {
+    background-color: #0dcaf0;
+    border-color: #0dcaf0;
+    color: #000;
+}
+
+.merchants-table .start-kyc-btn:hover {
+    background-color: #31d2f2;
+    border-color: #25cff2;
+}
+
+/* Responsive adjustments for action buttons */
+@media (max-width: 1200px) {
+    .merchants-table .btn-group .btn {
+        padding: 0.2rem 0.3rem;
+        min-width: 24px;
+        height: 24px;
+    }
+
+    .merchants-table .btn-group .btn i {
+        font-size: 0.65rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .merchants-table .btn-group {
+        flex-direction: column;
+        gap: 1px;
+        min-width: 32px;
+    }
+
+    .merchants-table .btn-group .btn {
+        width: 100%;
+        margin: 0;
+        margin-bottom: 1px;
+    }
+
+    .merchants-table th:last-child,
+    .merchants-table td:last-child {
+        min-width: 40px;
+        width: 40px;
+    }
+}
+
+/* Alert Enhancements */
+.alert {
+    border: none;
+    border-radius: 0.75rem;
+    border-left: 4px solid;
+}
+
+.alert-success {
+    border-left-color: var(--success-color);
+}
+
+.alert-warning {
+    border-left-color: var(--warning-color);
+}
+
+.alert-danger {
+    border-left-color: var(--danger-color);
+}
+
+.alert-info {
+    border-left-color: var(--info-color);
+}
+
+/* Recent Activity Items */
+.activity-item {
+    padding: 0.75rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    transition: background-color 0.3s ease;
+}
+
+.activity-item:hover {
+    background-color: rgba(0, 0, 0, 0.025);
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-time {
+    font-size: 0.75rem;
+    color: var(--secondary-color);
+}
+
+.activity-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .btn-action {
+        padding: 0.125rem 0.25rem;
+        font-size: 0.625rem;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #1a1a1a;
+        color: #ffffff;
+    }
+    
+    .card {
+        background-color: #2d2d2d;
+        color: #ffffff;
+    }
+    
+    .table {
+        color: #ffffff;
+    }
+    
+    .table th {
+        background-color: #3d3d3d;
+        color: #ffffff;
+    }
+    
+    .table-striped > tbody > tr:nth-of-type(odd) > td {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Transaction Details Modal Styles */
+#transactionDetailsModal .modal-dialog {
+    max-width: 90%;
+}
+
+#transactionDetailsModal .card {
+    margin-bottom: 1rem;
+    border: 1px solid #e9ecef;
+}
+
+#transactionDetailsModal .card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: 600;
+}
+
+#transactionDetailsModal .row.mb-2 {
+    padding: 0.25rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+#transactionDetailsModal .row.mb-2:last-child {
+    border-bottom: none;
+}
+
+#transactionDetailsModal code {
+    background-color: #f8f9fa;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+}
+
+#transactionDetailsModal pre {
+    max-height: 200px;
+    overflow-y: auto;
+    font-size: 0.8rem;
+}
+
+/* Risk level colors */
+.risk-low {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+.risk-medium {
+    color: var(--warning-color);
+    font-weight: 600;
+}
+
+.risk-high {
+    color: var(--danger-color);
+    font-weight: 600;
+}
+
+/* Risk Explanation Modal Styles */
+#riskExplanationModal .modal-dialog {
+    max-width: 90%;
+}
+
+#riskExplanationModal .card {
+    margin-bottom: 1rem;
+    border: 1px solid #e9ecef;
+}
+
+#riskExplanationModal .card-header {
+    font-weight: 600;
+    border-bottom: 1px solid #e9ecef;
+}
+
+#riskExplanationModal ul {
+    margin-bottom: 0;
+}
+
+#riskExplanationModal .small {
+    font-size: 0.875rem;
+}
+
+#riskExplanationModal .bg-light {
+    background-color: #f8f9fa !important;
+}
+
+#risk-explanation-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+#risk-explanation-btn:hover {
+    background-color: var(--info-color);
+    border-color: var(--info-color);
+    color: white;
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    .btn,
+    .dropdown {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+    }
+}

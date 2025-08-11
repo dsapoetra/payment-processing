@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Filter Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        button { margin: 5px; padding: 10px; }
+        input, select { margin: 5px; padding: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Transaction Filter Functionality Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Simple Filter Elements</h2>
+        <select id="transaction-status-filter">
+            <option value="">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+            <option value="failed">Failed</option>
+        </select>
+        <input type="date" id="transaction-date-from" />
+        <input type="date" id="transaction-date-to" />
+        <button onclick="filterTransactions()">Filter (Simple)</button>
+        <div id="simple-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Advanced Filter Elements</h2>
+        <form id="transaction-filter-form">
+            <select id="filter-status">
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+                <option value="failed">Failed</option>
+            </select>
+            <select id="filter-merchant">
+                <option value="">All Merchants</option>
+                <option value="merchant-1">Merchant 1</option>
+            </select>
+            <input type="email" id="filter-customer-email" placeholder="customer@example.com" />
+            <input type="date" id="filter-start-date" />
+            <input type="date" id="filter-end-date" />
+            <input type="number" id="filter-min-amount" step="0.01" />
+            <input type="number" id="filter-max-amount" step="0.01" />
+        </form>
+        <button onclick="testAdvancedFilters()">Test Advanced Filters</button>
+        <button onclick="testClearFilters()">Test Clear Filters</button>
+        <div id="advanced-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results</h2>
+        <div id="test-results"></div>
+    </div>
+
+    <script>
+        // Mock AdminDashboard class for testing
+        class AdminDashboard {
+            filterTransactions() {
+                console.log('filterTransactions called');
+                document.getElementById('simple-result').innerHTML = '<span class="success">✓ Simple filterTransactions() method called successfully</span>';
+                
+                // Test getTransactionFilters
+                const filters = this.getTransactionFilters();
+                console.log('Filters from simple section:', filters);
+                return filters;
+            }
+
+            applyTransactionFilters() {
+                console.log('applyTransactionFilters called');
+                document.getElementById('advanced-result').innerHTML = '<span class="success">✓ Advanced applyTransactionFilters() method called successfully</span>';
+                
+                // Test getTransactionFilters
+                const filters = this.getTransactionFilters();
+                console.log('Filters from advanced section:', filters);
+                return filters;
+            }
+
+            clearTransactionFilters() {
+                console.log('clearTransactionFilters called');
+                document.getElementById('transaction-filter-form').reset();
+                document.getElementById('advanced-result').innerHTML = '<span class="success">✓ Clear filters method called successfully</span>';
+            }
+
+            getTransactionFilters() {
+                const filters = {};
+
+                // Advanced filters (from the collapsible section)
+                const status = document.getElementById('filter-status')?.value;
+                if (status) filters.status = status;
+
+                const merchantId = document.getElementById('filter-merchant')?.value;
+                if (merchantId) filters.merchantId = merchantId;
+
+                const paymentMethod = document.getElementById('filter-payment-method')?.value;
+                if (paymentMethod) filters.paymentMethod = paymentMethod;
+
+                const customerEmail = document.getElementById('filter-customer-email')?.value;
+                if (customerEmail) filters.customerEmail = customerEmail;
+
+                const startDate = document.getElementById('filter-start-date')?.value;
+                if (startDate) filters.startDate = startDate;
+
+                const endDate = document.getElementById('filter-end-date')?.value;
+                if (endDate) filters.endDate = endDate;
+
+                const minAmount = document.getElementById('filter-min-amount')?.value;
+                if (minAmount) filters.minAmount = parseFloat(minAmount);
+
+                const maxAmount = document.getElementById('filter-max-amount')?.value;
+                if (maxAmount) filters.maxAmount = parseFloat(maxAmount);
+
+                // Simple filters (from the always-visible section)
+                // Only use simple filters if advanced filters are not set
+                if (!filters.status) {
+                    const simpleStatus = document.getElementById('transaction-status-filter')?.value;
+                    if (simpleStatus) filters.status = simpleStatus;
+                }
+
+                if (!filters.startDate && !filters.endDate) {
+                    const simpleDateFrom = document.getElementById('transaction-date-from')?.value;
+                    if (simpleDateFrom) filters.startDate = simpleDateFrom;
+
+                    const simpleDateTo = document.getElementById('transaction-date-to')?.value;
+                    if (simpleDateTo) filters.endDate = simpleDateTo;
+                }
+
+                return filters;
+            }
+        }
+
+        // Initialize dashboard
+        window.dashboard = new AdminDashboard();
+
+        // Global function for simple filter button
+        function filterTransactions() {
+            if (window.dashboard) {
+                return window.dashboard.filterTransactions();
+            } else {
+                console.error('Dashboard instance not available');
+                document.getElementById('simple-result').innerHTML = '<span class="error">✗ Dashboard instance not available</span>';
+            }
+        }
+
+        // Test functions
+        function testAdvancedFilters() {
+            if (window.dashboard) {
+                return window.dashboard.applyTransactionFilters();
+            } else {
+                document.getElementById('advanced-result').innerHTML = '<span class="error">✗ Dashboard instance not available</span>';
+            }
+        }
+
+        function testClearFilters() {
+            if (window.dashboard) {
+                return window.dashboard.clearTransactionFilters();
+            } else {
+                document.getElementById('advanced-result').innerHTML = '<span class="error">✗ Dashboard instance not available</span>';
+            }
+        }
+
+        // Run automatic tests on page load
+        window.addEventListener('load', function() {
+            const results = [];
+            
+            // Test 1: Check if global function exists
+            if (typeof filterTransactions === 'function') {
+                results.push('<span class="success">✓ Global filterTransactions function exists</span>');
+            } else {
+                results.push('<span class="error">✗ Global filterTransactions function missing</span>');
+            }
+
+            // Test 2: Check if dashboard instance exists
+            if (window.dashboard) {
+                results.push('<span class="success">✓ Dashboard instance available</span>');
+            } else {
+                results.push('<span class="error">✗ Dashboard instance missing</span>');
+            }
+
+            // Test 3: Check if dashboard methods exist
+            if (window.dashboard && typeof window.dashboard.filterTransactions === 'function') {
+                results.push('<span class="success">✓ Dashboard filterTransactions method exists</span>');
+            } else {
+                results.push('<span class="error">✗ Dashboard filterTransactions method missing</span>');
+            }
+
+            if (window.dashboard && typeof window.dashboard.getTransactionFilters === 'function') {
+                results.push('<span class="success">✓ Dashboard getTransactionFilters method exists</span>');
+            } else {
+                results.push('<span class="error">✗ Dashboard getTransactionFilters method missing</span>');
+            }
+
+            document.getElementById('test-results').innerHTML = results.join('<br>');
+        });
+    </script>
+</body>
+</html>

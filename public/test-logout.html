@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Logout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #c82333;
+        }
+        .info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Logout Test Page</h1>
+    
+    <div class="info">
+        <h3>Current Authentication Status:</h3>
+        <p><strong>Token:</strong> <span id="token-status">Checking...</span></p>
+        <p><strong>User:</strong> <span id="user-status">Checking...</span></p>
+        <p><strong>Tenant:</strong> <span id="tenant-status">Checking...</span></p>
+    </div>
+
+    <h3>Test Logout Methods:</h3>
+    
+    <button class="btn" onclick="testLogout1()">Method 1: Clear Storage + Redirect</button>
+    <button class="btn" onclick="testLogout2()">Method 2: Force Redirect</button>
+    <button class="btn" onclick="testLogout3()">Method 3: Location Replace</button>
+    
+    <div class="info">
+        <h3>Manual Commands:</h3>
+        <p>Open browser console (F12) and run:</p>
+        <code>
+            localStorage.clear();<br>
+            sessionStorage.clear();<br>
+            window.location.href = '/ui/auth/login.html';
+        </code>
+    </div>
+
+    <p><a href="/ui/admin">← Back to Admin Dashboard</a></p>
+
+    <script>
+        // Check current auth status
+        function updateStatus() {
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('user');
+            const tenant = localStorage.getItem('tenant');
+            
+            document.getElementById('token-status').textContent = token ? 'Present' : 'Missing';
+            document.getElementById('user-status').textContent = user ? 'Present' : 'Missing';
+            document.getElementById('tenant-status').textContent = tenant ? 'Present' : 'Missing';
+        }
+
+        function testLogout1() {
+            console.log('=== TEST LOGOUT 1 ===');
+            localStorage.clear();
+            sessionStorage.clear();
+            alert('Storage cleared! Redirecting in 2 seconds...');
+            setTimeout(() => {
+                window.location.href = '/ui/auth/login.html';
+            }, 2000);
+        }
+
+        function testLogout2() {
+            console.log('=== TEST LOGOUT 2 ===');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            localStorage.removeItem('tenant');
+            window.location.href = '/ui/auth/login.html';
+        }
+
+        function testLogout3() {
+            console.log('=== TEST LOGOUT 3 ===');
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.replace('/ui/auth/login.html');
+        }
+
+        // Update status on load
+        updateStatus();
+        
+        // Update status every 2 seconds
+        setInterval(updateStatus, 2000);
+    </script>
+</body>
+</html>
