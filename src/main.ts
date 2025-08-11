@@ -88,50 +88,29 @@ async function bootstrap() {
   const port = configService.get('PORT', 3000);
 
   try {
-    // For Vercel deployment, we need to handle both local and serverless environments
-    if (process.env.VERCEL) {
-      await app.init();
-      logger.log('🚀 Payment Processing Platform initialized for Vercel', 'Bootstrap');
-    } else {
-      await app.listen(port);
+    await app.listen(port);
 
-      logger.logSystemEvent(
-        `🚀 Payment Processing Platform started successfully`,
-        'application_start',
-        {
-          port,
-          apiPrefix,
-          environment: configService.get('NODE_ENV', 'development'),
-          nodeVersion: process.version,
-          platform: process.platform,
-        }
-      );
+    logger.logSystemEvent(
+      `🚀 Payment Processing Platform started successfully`,
+      'application_start',
+      {
+        port,
+        apiPrefix,
+        environment: configService.get('NODE_ENV', 'development'),
+        nodeVersion: process.version,
+        platform: process.platform,
+      }
+    );
 
-      logger.log(`🚀 Payment Processing Platform is running on: http://localhost:${port}/${apiPrefix}`, 'Bootstrap');
-      logger.log(`📚 API Documentation available at: http://localhost:${port}/swagger/docs`, 'Bootstrap');
-    }
+    logger.log(`🚀 Payment Processing Platform is running on: http://localhost:${port}/${apiPrefix}`, 'Bootstrap');
+    logger.log(`📚 API Documentation available at: http://localhost:${port}/swagger/docs`, 'Bootstrap');
   } catch (error) {
     logger.error('Failed to start application', error.stack, 'Bootstrap');
     process.exit(1);
   }
-
-  return app;
 }
 
-// Export the app for Vercel
-let cachedApp;
-
-export default async function handler(req, res) {
-  if (!cachedApp) {
-    cachedApp = await bootstrap();
-  }
-  return cachedApp.getHttpAdapter().getInstance()(req, res);
-}
-
-// For local development
-if (!process.env.VERCEL) {
-  bootstrap().catch((error) => {
-    console.error('Failed to bootstrap application:', error);
-    process.exit(1);
-  });
-}
+bootstrap().catch((error) => {
+  console.error('Failed to bootstrap application:', error);
+  process.exit(1);
+});
