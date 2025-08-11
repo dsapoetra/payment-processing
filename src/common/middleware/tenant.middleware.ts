@@ -25,6 +25,7 @@ export class TenantMiddleware implements NestMiddleware {
       '/api/v1/auth/debug',
       '/ui/auth/login.html',
       '/ui/auth/register.html',
+      '/ui/admin', // Admin interface - has its own auth
       '/setup-tenant.html',
       '/health',
       '/', // Root path

@@ -294,7 +294,12 @@
                     
                     document.getElementById('userInfo').style.display = 'block';
                     
-                    // Store tokens in sessionStorage for other pages
+                    // Store tokens in localStorage for admin interface compatibility
+                    localStorage.setItem('authToken', accessToken);
+                    localStorage.setItem('user', JSON.stringify(user));
+                    localStorage.setItem('tenant', JSON.stringify(tenant));
+
+                    // Also store in sessionStorage for backward compatibility
                     sessionStorage.setItem('accessToken', accessToken);
                     sessionStorage.setItem('apiKey', currentApiKey);
                     sessionStorage.setItem('tenantId', currentTenantId);
