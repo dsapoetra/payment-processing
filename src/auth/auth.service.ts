@@ -518,6 +518,7 @@ export class AuthService {
           subdomain: savedTenant.subdomain,
           plan: savedTenant.plan,
           trialEndsAt: savedTenant.trialEndsAt,
+          apiKey: savedTenant.apiKey,
         },
         ...tokens,
       };

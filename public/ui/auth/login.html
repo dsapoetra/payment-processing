@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Processing Platform - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .links a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .links a:hover {
+            text-decoration: underline;
+        }
+        
+        .user-info {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .user-info h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .user-info p {
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .user-info strong {
+            color: #333;
+        }
+        
+        .nav-links {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .nav-links a {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .nav-links a:hover {
+            background: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="header">
+            <h1>💳 Payment Processing</h1>
+            <p>Sign in to your account</p>
+        </div>
+        
+        <div class="alert" id="alert">
+            <span id="alertMessage"></span>
+        </div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn" id="loginBtn">Sign In</button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Signing you in...</p>
+        </div>
+        
+        <div class="user-info" id="userInfo">
+            <h3>✅ Login Successful!</h3>
+            <p><strong>Welcome:</strong> <span id="userName"></span></p>
+            <p><strong>Email:</strong> <span id="userEmail"></span></p>
+            <p><strong>Role:</strong> <span id="userRole"></span></p>
+            <p><strong>Organization:</strong> <span id="tenantName"></span></p>
+            <p><strong>API Key:</strong> <code id="apiKey" style="font-size: 12px; word-break: break-all;"></code></p>
+            
+            <div class="nav-links">
+                <a href="/ui/admin" id="adminLink">Admin Dashboard</a>
+                <a href="/swagger" id="swaggerLink">API Docs</a>
+                <a href="/api/v1/health" id="healthLink" target="_blank">Health Check</a>
+            </div>
+        </div>
+        
+        <div class="links">
+            <a href="/setup-tenant.html">Don't have an account? Create Organization</a>
+        </div>
+    </div>
+
+    <script>
+        let currentApiKey = '';
+        let currentTenantId = '';
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('alert').style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/v1/auth/public-login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                if (response.ok) {
+                    const { user, tenant, accessToken } = result;
+                    
+                    // Store for later use
+                    currentApiKey = tenant.apiKey || '';
+                    currentTenantId = tenant.id;
+                    
+                    // Show success
+                    showAlert('Login successful! Welcome back.', 'success');
+                    
+                    // Show user info
+                    document.getElementById('userName').textContent = `${user.firstName} ${user.lastName}`;
+                    document.getElementById('userEmail').textContent = user.email;
+                    document.getElementById('userRole').textContent = user.role;
+                    document.getElementById('tenantName').textContent = tenant.name;
+                    document.getElementById('apiKey').textContent = currentApiKey || 'Not available';
+                    
+                    // Update navigation links to include API key
+                    updateNavLinks();
+                    
+                    document.getElementById('userInfo').style.display = 'block';
+                    
+                    // Store tokens in sessionStorage for other pages
+                    sessionStorage.setItem('accessToken', accessToken);
+                    sessionStorage.setItem('apiKey', currentApiKey);
+                    sessionStorage.setItem('tenantId', currentTenantId);
+                    
+                } else {
+                    showAlert(result.message || 'Login failed. Please check your credentials.', 'error');
+                    document.getElementById('loginForm').style.display = 'block';
+                }
+                
+            } catch (error) {
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('loginForm').style.display = 'block';
+                
+                showAlert('Connection error. Please try again.', 'error');
+                console.error('Login error:', error);
+            }
+        });
+        
+        function showAlert(message, type) {
+            const alert = document.getElementById('alert');
+            const alertMessage = document.getElementById('alertMessage');
+            
+            alertMessage.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+        }
+        
+        function updateNavLinks() {
+            // Add API key to links that need it
+            const adminLink = document.getElementById('adminLink');
+            const swaggerLink = document.getElementById('swaggerLink');
+            const healthLink = document.getElementById('healthLink');
+            
+            if (currentApiKey) {
+                // For now, just update the href. In a real app, you'd set headers
+                adminLink.href = `/ui/admin?apiKey=${encodeURIComponent(currentApiKey)}`;
+                swaggerLink.href = `/swagger?apiKey=${encodeURIComponent(currentApiKey)}`;
+                healthLink.href = `/api/v1/health?apiKey=${encodeURIComponent(currentApiKey)}`;
+            } else if (currentTenantId) {
+                adminLink.href = `/ui/admin?tenantId=${encodeURIComponent(currentTenantId)}`;
+                swaggerLink.href = `/swagger?tenantId=${encodeURIComponent(currentTenantId)}`;
+                healthLink.href = `/api/v1/health?tenantId=${encodeURIComponent(currentTenantId)}`;
+            }
+        }
+        
+        // Check if user is already logged in
+        window.addEventListener('load', function() {
+            const accessToken = sessionStorage.getItem('accessToken');
+            const apiKey = sessionStorage.getItem('apiKey');
+            const tenantId = sessionStorage.getItem('tenantId');
+            
+            if (accessToken && (apiKey || tenantId)) {
+                // User is already logged in, could redirect or show logged in state
+                console.log('User already logged in');
+            }
+        });
+    </script>
+</body>
+</html>

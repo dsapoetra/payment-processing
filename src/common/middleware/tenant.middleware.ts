@@ -16,8 +16,27 @@ export class TenantMiddleware implements NestMiddleware {
   ) {}
 
   async use(req: RequestWithTenant, res: Response, next: NextFunction) {
-    // Skip tenant middleware for health endpoints, swagger docs, public registration, public login, and debug endpoints
-    const skipPaths = ['/api/v1/health', '/swagger/docs', '/api/v1/auth/public-register', '/api/v1/auth/public-login', '/api/v1/auth/debug'];
+    // Skip tenant middleware for health endpoints, swagger docs, public registration, public login, debug endpoints, and UI paths
+    const skipPaths = [
+      '/api/v1/health',
+      '/swagger',
+      '/api/v1/auth/public-register',
+      '/api/v1/auth/public-login',
+      '/api/v1/auth/debug',
+      '/ui/auth/login.html',
+      '/ui/auth/register.html',
+      '/setup-tenant.html',
+      '/health',
+      '/', // Root path
+      '/favicon.ico',
+      '/static/', // Static assets
+      '/assets/', // Static assets
+      '/css/', // CSS files
+      '/js/', // JavaScript files
+      '/images/', // Image files
+    ];
+
+    // Check if the request path should skip tenant middleware
     if (skipPaths.some(path => req.originalUrl.startsWith(path))) {
       return next();
     }

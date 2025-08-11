@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Processing Platform - Tenant Setup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .required {
+            color: #e74c3c;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .result h3 {
+            margin-bottom: 15px;
+        }
+        
+        .result pre {
+            background: rgba(0,0,0,0.1);
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Payment Processing Platform</h1>
+            <p>Create your organization and admin account</p>
+        </div>
+        
+        <form id="tenantForm">
+            <h3 style="margin-bottom: 20px; color: #333;">👤 Admin User Information</h3>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="firstName">First Name <span class="required">*</span></label>
+                    <input type="text" id="firstName" name="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name <span class="required">*</span></label>
+                    <input type="text" id="lastName" name="lastName" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address <span class="required">*</span></label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password <span class="required">*</span></label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="Min 8 chars, uppercase, lowercase, number, special char">
+            </div>
+            
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="+1-555-123-4567">
+            </div>
+            
+            <h3 style="margin: 30px 0 20px; color: #333;">🏢 Organization Information</h3>
+            
+            <div class="form-group">
+                <label for="organizationName">Organization Name <span class="required">*</span></label>
+                <input type="text" id="organizationName" name="organizationName" required>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="organizationType">Organization Type</label>
+                    <select id="organizationType" name="organizationType">
+                        <option value="business">Business</option>
+                        <option value="nonprofit">Non-profit</option>
+                        <option value="government">Government</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="industry">Industry</label>
+                    <select id="industry" name="industry">
+                        <option value="technology">Technology</option>
+                        <option value="finance">Finance</option>
+                        <option value="retail">Retail</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="website">Website</label>
+                <input type="url" id="website" name="website" placeholder="https://yourcompany.com">
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="3" 
+                          placeholder="Brief description of your organization"></textarea>
+            </div>
+            
+            <button type="submit" class="btn">Create Organization & Admin Account</button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Creating your organization...</p>
+        </div>
+        
+        <div class="result" id="result">
+            <h3 id="resultTitle"></h3>
+            <div id="resultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('tenantForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Remove empty fields
+            Object.keys(data).forEach(key => {
+                if (!data[key]) delete data[key];
+            });
+            
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            form.style.display = 'none';
+            
+            try {
+                const response = await fetch('/api/v1/auth/public-register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                const resultDiv = document.getElementById('result');
+                const resultTitle = document.getElementById('resultTitle');
+                const resultContent = document.getElementById('resultContent');
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultTitle.textContent = '✅ Success! Organization Created';
+                    
+                    const { user, tenant } = result;
+                    
+                    resultContent.innerHTML = `
+                        <p><strong>Your organization and admin account have been created successfully!</strong></p>
+                        
+                        <h4 style="margin-top: 20px;">👤 Admin User:</h4>
+                        <ul>
+                            <li>Email: ${user.email}</li>
+                            <li>Name: ${user.firstName} ${user.lastName}</li>
+                            <li>Role: ${user.role}</li>
+                        </ul>
+                        
+                        <h4 style="margin-top: 20px;">🏢 Organization:</h4>
+                        <ul>
+                            <li>Name: ${tenant.name}</li>
+                            <li>Subdomain: ${tenant.subdomain}</li>
+                            <li>Plan: ${tenant.plan}</li>
+                        </ul>
+                        
+                        <h4 style="margin-top: 20px;">🔑 Important - Save These:</h4>
+                        <pre>API Key: ${tenant.apiKey}
+Tenant ID: ${tenant.id}</pre>
+                        
+                        <h4 style="margin-top: 20px;">🌐 Access Your Application:</h4>
+                        <p>Add this header to your API requests:</p>
+                        <pre>X-API-Key: ${tenant.apiKey}</pre>
+                        
+                        <p style="margin-top: 15px;"><strong>Test URLs:</strong></p>
+                        <ul>
+                            <li><a href="/api/v1/health" target="_blank">Health Check</a></li>
+                            <li><a href="/ui/admin" target="_blank">Admin Interface</a></li>
+                            <li><a href="/swagger" target="_blank">API Documentation</a></li>
+                        </ul>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultTitle.textContent = '❌ Error Creating Organization';
+                    resultContent.innerHTML = `
+                        <p><strong>Error:</strong> ${result.message || 'Unknown error occurred'}</p>
+                        <pre>${JSON.stringify(result, null, 2)}</pre>
+                        <button onclick="location.reload()" class="btn" style="margin-top: 15px;">Try Again</button>
+                    `;
+                }
+                
+                resultDiv.style.display = 'block';
+                
+            } catch (error) {
+                // Hide loading
+                document.getElementById('loading').style.display = 'none';
+                
+                const resultDiv = document.getElementById('result');
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+                
+                document.getElementById('resultTitle').textContent = '❌ Connection Error';
+                document.getElementById('resultContent').innerHTML = `
+                    <p><strong>Error:</strong> ${error.message}</p>
+                    <p>Please check your internet connection and try again.</p>
+                    <button onclick="location.reload()" class="btn" style="margin-top: 15px;">Try Again</button>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

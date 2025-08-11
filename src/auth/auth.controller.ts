@@ -74,6 +74,7 @@ export class AuthController {
             subdomain: { type: 'string' },
             plan: { type: 'string', enum: ['starter', 'professional', 'enterprise'] },
             trialEndsAt: { type: 'string', format: 'date-time' },
+            apiKey: { type: 'string', description: 'API key for tenant authentication' },
           },
         },
         accessToken: { type: 'string' },
