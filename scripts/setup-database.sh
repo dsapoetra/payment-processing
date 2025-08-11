@@ -13,11 +13,11 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Database configuration
-DB_HOST=ep-blue-queen-a1qgr9nj-pooler.ap-southeast-1.aws.neon.tech
-DB_PORT=5432
-DB_USER=neondb_owner
-DB_PASSWORD=npg_D9muJXo3YtRZ
-DB_NAME=neondb
+DB_HOST=
+DB_PORT=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
 
 echo -e "${BLUE}🚀 Payment Processing Platform - Database Setup${NC}"
 echo "=================================================="
