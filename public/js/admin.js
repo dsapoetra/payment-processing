@@ -814,7 +814,8 @@ class AdminDashboard {
         const headers = {
             'Content-Type': 'application/json',
             ...(this.token && { 'Authorization': `Bearer ${this.token}` }),
-            ...(this.tenant && { 'X-Tenant-ID': this.tenant.id })
+            ...(this.tenant && { 'X-Tenant-ID': this.tenant.id }),
+            ...(this.tenant && this.tenant.apiKey && { 'X-API-Key': this.tenant.apiKey })
         };
 
         const defaultOptions = {
@@ -823,6 +824,16 @@ class AdminDashboard {
                 ...(options.headers || {})
             }
         };
+
+        console.log('API Call:', {
+            url,
+            method: options.method || 'GET',
+            headers: defaultOptions.headers,
+            hasToken: !!this.token,
+            hasTenant: !!this.tenant,
+            tenantId: this.tenant?.id,
+            apiKey: this.tenant?.apiKey ? 'present' : 'missing'
+        });
 
         const response = await fetch(url, { ...defaultOptions, ...options });
 
