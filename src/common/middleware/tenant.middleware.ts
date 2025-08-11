@@ -45,43 +45,58 @@ export class TenantMiddleware implements NestMiddleware {
     try {
       let tenant: Tenant | null = null;
 
+      console.log('=== TENANT MIDDLEWARE DEBUG ===');
+      console.log('Request URL:', req.originalUrl);
+      console.log('Request method:', req.method);
+
       // Try to get tenant from subdomain
       const host = req.get('host');
+      console.log('Host:', host);
       if (host) {
         const subdomain = this.extractSubdomain(host);
+        console.log('Extracted subdomain:', subdomain);
         if (subdomain) {
           tenant = await this.tenantRepository.findOne({
             where: { subdomain, status: TenantStatus.ACTIVE },
           });
+          console.log('Tenant from subdomain:', tenant ? 'found' : 'not found');
         }
       }
 
       // Try to get tenant from API key header
       if (!tenant) {
         const apiKey = req.get('X-API-Key');
+        console.log('API Key header:', apiKey ? 'present' : 'missing');
         if (apiKey) {
           tenant = await this.tenantRepository.findOne({
             where: { apiKey, status: TenantStatus.ACTIVE },
           });
+          console.log('Tenant from API key:', tenant ? 'found' : 'not found');
         }
       }
 
       // Try to get tenant from custom header
       if (!tenant) {
         const tenantId = req.get('X-Tenant-ID');
+        console.log('X-Tenant-ID header:', tenantId);
         if (tenantId) {
           tenant = await this.tenantRepository.findOne({
             where: { id: tenantId, status: TenantStatus.ACTIVE },
           });
+          console.log('Tenant from X-Tenant-ID:', tenant ? `found (${tenant.name})` : 'not found');
         }
       }
 
+      console.log('Final tenant resolution:', tenant ? `SUCCESS (${tenant.name})` : 'FAILED');
+
       if (!tenant) {
+        console.log('ERROR: Tenant not found or inactive');
         throw new BadRequestException('Tenant not found or inactive');
       }
 
       // Check tenant limits and status
       if (tenant.status !== TenantStatus.ACTIVE) {
+        console.log('ERROR: Tenant is not active, status:', tenant.status);
         throw new BadRequestException('Tenant is not active');
       }
 
@@ -91,6 +106,7 @@ export class TenantMiddleware implements NestMiddleware {
       });
 
       req.tenant = tenant;
+      console.log('SUCCESS: Tenant attached to request:', tenant.id);
       next();
     } catch (error) {
       if (error instanceof BadRequestException || error instanceof NotFoundException) {
