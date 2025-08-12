@@ -424,9 +424,7 @@ function clearCorruptedAuthData() {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Initializing authentication system...');
     clearCorruptedAuthData();
     authManager = new AuthManager();
     window.authManager = authManager;
-    console.log('Authentication system initialized');
 });

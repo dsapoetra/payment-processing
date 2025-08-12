@@ -3,8 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ScheduleModule } from '@nestjs/schedule';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TenantsModule } from './tenants/tenants.module';
@@ -16,6 +15,7 @@ import { AuditModule } from './audit/audit.module';
 import { AnalyticsModule } from './analytics/analytics.module';
 import { SecurityModule } from './security/security.module';
 import { HealthModule } from './health/health.module';
+import { UiModule } from './ui/ui.module';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
 import { RequestContextMiddleware } from './common/middleware/request-context.middleware';
 import { AdminAuthMiddleware } from './middleware/admin-auth.middleware';
@@ -36,23 +36,7 @@ import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
     // Logging
     LoggingModule,
 
-    // Static file serving for UI
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-      serveRoot: '/ui',
-      serveStaticOptions: {
-        index: 'index.html',
-        fallthrough: false,
-        setHeaders: (res, path) => {
-          // Prevent caching of admin pages for security
-          if (path.includes('/admin/') || path.includes('admin.html')) {
-            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-            res.setHeader('Pragma', 'no-cache');
-            res.setHeader('Expires', '0');
-          }
-        },
-      },
-    }),
+    // Static file serving handled by UiController
 
     // Database
     TypeOrmModule.forRootAsync({
@@ -100,6 +84,7 @@ import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
     AnalyticsModule,
     SecurityModule,
     HealthModule,
+    UiModule,
   ],
   controllers: [AppController],
   providers: [

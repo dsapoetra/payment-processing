@@ -1118,19 +1118,12 @@
     <!-- Immediate Auth Check Script -->
     <script>
         // IMMEDIATE AUTHENTICATION CHECK - BLOCKS PAGE LOAD
-        console.log('=== IMMEDIATE AUTH CHECK ===');
-
         function checkAuthImmediate() {
             const token = localStorage.getItem('authToken');
             const user = localStorage.getItem('user');
             const tenant = localStorage.getItem('tenant');
 
-            console.log('Immediate check - Token:', !!token);
-            console.log('Immediate check - User:', !!user);
-            console.log('Immediate check - Tenant:', !!tenant);
-
             if (!token || !user || !tenant) {
-                console.log('IMMEDIATE AUTH FAILED - Redirecting');
                 // Hide page immediately
                 document.body.style.display = 'none';
                 alert('Authentication required. You will be redirected to login.');
@@ -1138,7 +1131,6 @@
                 return false;
             }
 
-            console.log('IMMEDIATE AUTH PASSED');
             return true;
         }
 

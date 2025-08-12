@@ -1,5 +1,4 @@
 // Admin Dashboard JavaScript
-console.log('=== ADMIN.JS LOADING ===', new Date());
 
 class AdminDashboard {
     constructor() {
@@ -14,26 +13,16 @@ class AdminDashboard {
     }
 
     async init() {
-        console.log('=== ADMIN INIT CALLED ===');
-
-        // Check authentication AGGRESSIVELY
+        // Check authentication
         const authCheck = this.isAuthenticated();
-        console.log('Basic authentication check result:', authCheck);
 
         if (!authCheck) {
-            console.log('BASIC AUTH FAILED - Redirecting to login');
             this.redirectToLogin();
             return;
         }
 
-        // TEMPORARILY SKIP SERVER VALIDATION - just use basic auth check
-        console.log('Basic auth passed, skipping server validation for now...');
-
-        console.log('FULLY AUTHENTICATED - Loading dashboard');
-
         // Show the page content by adding authenticated class
         document.body.classList.add('authenticated');
-        console.log('Page content now visible');
 
         this.setupNavigation();
         this.setupEventListeners();
@@ -223,34 +212,27 @@ class AdminDashboard {
             });
         }
 
-        // Add logout event listeners with debugging
+        // Add logout event listeners
         const logoutBtn = document.getElementById('logout-btn');
-        console.log('Logout button found:', !!logoutBtn);
         if (logoutBtn) {
             logoutBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Dropdown logout button clicked');
                 logout();
             });
-            console.log('Dropdown logout event listener added');
         }
 
         const emergencyLogoutBtn = document.getElementById('emergency-logout');
-        console.log('Emergency logout button found:', !!emergencyLogoutBtn);
         if (emergencyLogoutBtn) {
             emergencyLogoutBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Emergency logout button clicked');
                 logout();
             });
-            console.log('Emergency logout event listener added');
         }
 
         // Add a global test function
         window.testLogout = function() {
-            console.log('TEST LOGOUT CALLED');
             logout();
         };
 
@@ -714,7 +696,6 @@ class AdminDashboard {
     }
 
     async loadTransactions() {
-        console.log('=== LOADING TRANSACTIONS ===');
         try {
             // Get current filters
             const filters = this.getTransactionFilters();
@@ -882,11 +863,10 @@ class AdminDashboard {
 
     // Placeholder methods for future implementation
     loadMerchants() {
-        console.log('Loading merchants...');
+        // Loading merchants...
     }
 
     async loadAnalytics() {
-        console.log('=== LOADING ANALYTICS ===');
         try {
             // Load comprehensive analytics data
             await Promise.all([
@@ -1090,7 +1070,6 @@ class AdminDashboard {
     }
 
     async loadSecurityData() {
-        console.log('=== LOADING SECURITY DATA ===');
         try {
             // Load security metrics
             await Promise.all([
@@ -2012,7 +1991,6 @@ class AdminDashboard {
     }
 
     async loadUsers() {
-        console.log('=== LOADING USERS ===');
         try {
             const response = await this.apiCall('/users');
             const users = response || [];
@@ -2240,10 +2218,7 @@ class AdminDashboard {
             // Loading merchants...
 
             const response = await this.apiCall('/merchants');
-            console.log('Raw API response:', response);
-
             const merchants = Array.isArray(response) ? response : (response.data || []);
-            console.log('Processed merchants:', merchants);
 
             const merchantSelect = document.getElementById('tx-merchant');
             if (merchantSelect) {
@@ -2967,15 +2942,12 @@ function showProfile() {
 
 // Test function to verify JS is working
 function testLogout() {
-    console.log('=== TEST LOGOUT CALLED ===');
     localStorage.clear();
     sessionStorage.clear();
-    console.log('Storage cleared, redirecting...');
     window.location.href = '/ui/auth/login.html';
 }
 
 function logout() {
-    console.log('=== LOGOUT CALLED ===');
 
     // Clearing authentication data
 
