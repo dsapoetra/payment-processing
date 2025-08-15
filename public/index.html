@@ -535,17 +535,34 @@
         // Load real-time stats
         async function loadStats() {
             try {
-                const response = await fetch('/api/v1/analytics/realtime');
-                const data = await response.json();
-                
-                document.getElementById('stat-transactions').textContent = 
-                    data.transactionVolume?.count?.toLocaleString() || '0';
-                document.getElementById('stat-volume').textContent = 
-                    '$' + (data.transactionVolume?.total?.toLocaleString() || '0');
-                document.getElementById('stat-merchants').textContent = 
-                    data.merchantMetrics?.activeMerchants?.toLocaleString() || '0';
+                // Check if user is authenticated
+                const authToken = localStorage.getItem('authToken');
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
+                const response = await fetch('/api/v1/analytics/realtime', {
+                    headers: headers
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    document.getElementById('stat-transactions').textContent =
+                        data.transactionMetrics?.totalTransactions?.toLocaleString() || '0';
+                    document.getElementById('stat-volume').textContent =
+                        '$' + (data.transactionMetrics?.totalVolume?.toLocaleString() || '0');
+                    document.getElementById('stat-merchants').textContent =
+                        data.merchantMetrics?.activeMerchants?.toLocaleString() || '0';
+                } else {
+                    throw new Error('API call failed');
+                }
             } catch (error) {
-                console.log('Stats not available in demo mode');
+                console.log('Stats not available, showing demo values');
                 // Set demo values
                 document.getElementById('stat-transactions').textContent = '1,234';
                 document.getElementById('stat-volume').textContent = '$567,890';
