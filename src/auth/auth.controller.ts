@@ -25,6 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { EnhancedThrottlerGuard, Throttle } from '../common/guards/enhanced-throttler.guard';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
@@ -38,12 +39,13 @@ import { ErrorResponseDto, SuccessResponseDto } from '../common/dto/api-response
 
 @ApiTags('Authentication')
 @Controller('auth')
-@UseGuards(ThrottlerGuard)
+@UseGuards(EnhancedThrottlerGuard)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('public-register')
   @HttpCode(HttpStatus.CREATED)
+  @Throttle({ short: 3, medium: 10, long: 20 }) // Very restrictive for registration
   @ApiOperation({
     summary: 'Public registration - Create new organization and admin user',
     description: 'Creates a new tenant organization and the first admin user. This endpoint does not require an existing tenant context.',
@@ -142,6 +144,7 @@ export class AuthController {
 
   @Post('public-login')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ short: 5, medium: 20, long: 50 }) // Restrictive for login attempts
   @ApiOperation({
     summary: 'Public login - Login with email and password',
     description: 'Authenticates a user by email and password without requiring tenant context. Automatically finds the user\'s tenant.',
@@ -251,6 +254,7 @@ export class AuthController {
 
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
+  @Throttle({ short: 10, medium: 50, long: 200 }) // Moderate limits for token refresh
   @ApiOperation({
     summary: 'Refresh access token',
     description: 'Generates a new access token using a valid refresh token.',

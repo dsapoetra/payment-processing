@@ -19,6 +19,7 @@ import { UiModule } from './ui/ui.module';
 import { TenantMiddleware } from './common/middleware/tenant.middleware';
 import { RequestContextMiddleware } from './common/middleware/request-context.middleware';
 import { AdminAuthMiddleware } from './middleware/admin-auth.middleware';
+import { SecurityMiddleware } from './security/middleware/security.middleware';
 import { LoggingModule } from './common/logging/logging.module';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { PerformanceInterceptor } from './common/interceptors/performance.interceptor';
@@ -59,13 +60,24 @@ import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
       inject: [ConfigService],
     }),
 
-    // Rate limiting
+    // Rate limiting with multiple tiers
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => [
         {
-          ttl: configService.get('RATE_LIMIT_TTL', 60) * 1000,
-          limit: configService.get('RATE_LIMIT_LIMIT', 100),
+          name: 'short',
+          ttl: configService.get('RATE_LIMIT_SHORT_TTL', 60) * 1000, // 1 minute
+          limit: configService.get('RATE_LIMIT_SHORT_LIMIT', 20),
+        },
+        {
+          name: 'medium',
+          ttl: configService.get('RATE_LIMIT_MEDIUM_TTL', 600) * 1000, // 10 minutes
+          limit: configService.get('RATE_LIMIT_MEDIUM_LIMIT', 100),
+        },
+        {
+          name: 'long',
+          ttl: configService.get('RATE_LIMIT_LONG_TTL', 3600) * 1000, // 1 hour
+          limit: configService.get('RATE_LIMIT_LONG_LIMIT', 1000),
         },
       ],
       inject: [ConfigService],
@@ -105,6 +117,11 @@ import { APP_INTERCEPTOR, APP_FILTER } from '@nestjs/core';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
+    // Apply security middleware first
+    consumer
+      .apply(SecurityMiddleware)
+      .forRoutes('*');
+
     consumer
       .apply(RequestContextMiddleware)
       .forRoutes('*');

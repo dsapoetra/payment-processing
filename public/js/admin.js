@@ -222,14 +222,7 @@ class AdminDashboard {
             });
         }
 
-        const emergencyLogoutBtn = document.getElementById('emergency-logout');
-        if (emergencyLogoutBtn) {
-            emergencyLogoutBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                logout();
-            });
-        }
+
 
         // Add a global test function
         window.testLogout = function() {

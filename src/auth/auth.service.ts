@@ -16,6 +16,7 @@ import { RegisterDto } from './dto/register.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import { AppLoggerService } from '../common/services/logger.service';
+import { OwaspSecurityService } from '../security/services/owasp-security.service';
 import * as crypto from 'crypto';
 
 @Injectable()
@@ -28,6 +29,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly logger: AppLoggerService,
+    private readonly owaspSecurityService: OwaspSecurityService,
   ) {}
 
   async register(registerDto: RegisterDto, tenantId: string, ipAddress?: string, userAgent?: string): Promise<AuthResponse> {
@@ -61,10 +63,19 @@ export class AuthService {
         throw new ConflictException('User already exists in this tenant');
       }
 
-      // Hash password
-      const saltRounds = parseInt(this.configService.get('BCRYPT_ROUNDS', '10'), 10);
-      const salt = await bcrypt.genSalt(saltRounds);
-      const passwordHash = await bcrypt.hash(registerDto.password, salt);
+      // Validate password strength
+      const passwordValidation = this.owaspSecurityService.validatePasswordStrength(registerDto.password);
+      if (!passwordValidation.valid) {
+        this.logger.warn(
+          `Password validation failed for registration: ${registerDto.email}`,
+          'Authentication',
+          { ...logContext, email: registerDto.email, issues: passwordValidation.issues }
+        );
+        throw new BadRequestException(`Password does not meet security requirements: ${passwordValidation.issues.join(', ')}`);
+      }
+
+      // Hash password using OWASP security service
+      const passwordHash = await this.owaspSecurityService.hashPassword(registerDto.password);
 
       // Create user
       const user = this.userRepository.create({
@@ -277,12 +288,22 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string, tenantId: string): Promise<User | null> {
+    // Validate email format first
+    if (!this.owaspSecurityService.validateEmail(email)) {
+      this.owaspSecurityService.logSecurityEvent(
+        'Invalid email format in login attempt',
+        { email, tenantId },
+        'medium'
+      );
+      return null;
+    }
+
     const user = await this.userRepository.findOne({
       where: { email, tenantId },
       select: ['id', 'email', 'firstName', 'lastName', 'role', 'status', 'passwordHash', 'tenantId'],
     });
 
-    if (user && (await bcrypt.compare(password, user.passwordHash))) {
+    if (user && (await this.owaspSecurityService.verifyPassword(password, user.passwordHash))) {
       return user;
     }
 
@@ -465,10 +486,19 @@ export class AuthService {
 
       const savedTenant = await this.tenantRepository.save(tenant);
 
-      // Hash password
-      const saltRounds = parseInt(this.configService.get('BCRYPT_ROUNDS', '10'), 10);
-      const salt = await bcrypt.genSalt(saltRounds);
-      const passwordHash = await bcrypt.hash(registerDto.password, salt);
+      // Validate password strength
+      const passwordValidation = this.owaspSecurityService.validatePasswordStrength(registerDto.password);
+      if (!passwordValidation.valid) {
+        this.logger.warn(
+          `Password validation failed for public registration: ${registerDto.email}`,
+          'Authentication',
+          { email: registerDto.email, issues: passwordValidation.issues }
+        );
+        throw new BadRequestException(`Password does not meet security requirements: ${passwordValidation.issues.join(', ')}`);
+      }
+
+      // Hash password using OWASP security service
+      const passwordHash = await this.owaspSecurityService.hashPassword(registerDto.password);
 
       // Create user as tenant admin
       const user = this.userRepository.create({

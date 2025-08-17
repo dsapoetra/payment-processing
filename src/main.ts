@@ -18,20 +18,20 @@ async function bootstrap() {
   const logger = app.get(AppLoggerService);
   const configService = app.get(ConfigService);
 
-  // Security middleware with CSP configuration for UI
+  // Enhanced security middleware with strict CSP and OWASP compliance
   app.use(helmet({
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
         scriptSrc: [
           "'self'",
-          "'unsafe-inline'", // Allow inline scripts for UI
+          "'unsafe-inline'", // Allow inline scripts for UI (consider removing in production)
           "https://cdn.jsdelivr.net", // Bootstrap CDN
           "https://cdnjs.cloudflare.com", // Font Awesome and other CDNs
         ],
         styleSrc: [
           "'self'",
-          "'unsafe-inline'", // Allow inline styles
+          "'unsafe-inline'", // Allow inline styles (consider removing in production)
           "https://cdn.jsdelivr.net", // Bootstrap CSS
           "https://cdnjs.cloudflare.com", // Font Awesome CSS
           "https://fonts.googleapis.com", // Google Fonts
@@ -53,12 +53,21 @@ async function bootstrap() {
         objectSrc: ["'none'"],
         baseUri: ["'self'"],
         formAction: ["'self'"],
+        upgradeInsecureRequests: configService.get('NODE_ENV') === 'production' ? [] : null,
       },
     },
+    hsts: {
+      maxAge: 31536000, // 1 year
+      includeSubDomains: true,
+      preload: true,
+    },
+    noSniff: true,
+    xssFilter: true,
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   }));
   app.use(compression());
 
-  // Global validation pipe
+  // Global validation pipe with enhanced security
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -67,6 +76,8 @@ async function bootstrap() {
       transformOptions: {
         enableImplicitConversion: true,
       },
+      disableErrorMessages: configService.get('NODE_ENV') === 'production', // Hide detailed errors in production
+      stopAtFirstError: true, // Stop at first validation error for security
     }),
   );
 
